@@ -1,0 +1,5 @@
+.vscode
+.DS_Store
+server/node_modules
+server/metrics-db
+dashboard/node_modules
