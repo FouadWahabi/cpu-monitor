@@ -1,0 +1,64 @@
+$fa-font-path: "~font-awesome/fonts/";
+@import "~react-grid-layout/css/styles.css";
+@import "~font-awesome/scss/font-awesome";
+
+.react-grid-layout {
+  margin: -15px;
+
+  .react-grid-item.react-grid-placeholder {
+      background: none;
+      z-index: 2;
+      transition-duration: 100ms;
+      user-select: none;
+      position: relative;
+      opacity: 0.7;
+
+      &:after {
+          position: absolute;
+          left: 50%;
+          top: 0;
+          transform: translate(-50%, 0);
+          content: " ";
+          background: rgba(#1EB7FF, 0.3);
+          border-radius: 4px;
+          border: 2px dashed #1EB7FF;
+          height: calc(100% - 15px);
+          width: calc(100% - 30px);
+      }
+  }
+}
+
+.float-column {
+  display: flex;
+  flex-direction: column;
+
+  > .card {
+      flex: 1 1 auto;
+      margin-bottom: 15px;
+
+      + .react-resizable-handle {
+          bottom: 15px;
+          right: 15px;
+      }
+
+      > .card-header {
+          cursor: move;
+          user-select: none;
+      }
+  }
+}
+
+.float-column {
+  // Reset column sizes
+  [class^="col-"] {
+      flex: 0 0 100%;
+      max-width: 100%;
+  }
+
+  &--size-lg {
+      .col-md-4 {
+          flex: 0 0 (100% / 3);
+          max-width: (100% / 3);
+      }
+  }
+}
