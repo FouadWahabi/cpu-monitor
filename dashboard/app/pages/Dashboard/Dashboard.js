@@ -12,15 +12,19 @@ import {
     DropdownMenu,
     DropdownItem,
     CardBody,
+    ListGroup,
+    ListGroupItem,
 } from 'reactstrap';
 import Grid, { applyColumn } from './../../components/FloatGrid';
 
 import {
     CPUUsageMonitor
 } from "./components/CPUUsageMonitor";
+import Alert from './components/Alert';
 
 const LAYOUT = {
     'live-cpu-usage': { h: 4, md: 6 },
+    'alerts': { h: 8, md: 6 },
     'live-cpu-load': { h: 4, md: 6 },
     'cpu-load': { h: 9, minH: 7 },
     'cpu-usage': { h: 9, minH: 7 },
@@ -38,13 +42,16 @@ const PERIOD_DIFF = [60000, 60000 * 10, 60000 * 60, 60000 * 60 * 24 ];
 
 const PERIOD_LABELS = ['Last Minute', 'Last 10 Minutes', 'Last Hour', 'Last Day'];
 
+const HIGH_LOAD_THRESHOLD = 1;
+
 export class Dashboard extends React.Component {
     state = {
         layouts: _.clone(LAYOUT),
         loading: false,
-        selectedPeriod: 0,
+        selectedPeriod: 1,
         load: [],
-        usage : []
+        usage : [],
+        alerts: [],
     }
 
     dataLoadInterval = null;
@@ -78,6 +85,40 @@ export class Dashboard extends React.Component {
         return data;
     }
 
+    findAlerts(data) {
+        let alert = {};
+        const alerts = [];
+        for (let index = 0 ; index < data.length ; index += 1) {
+            if (data[index].load >= HIGH_LOAD_THRESHOLD) {
+                if (alert.type !== 'high_load') {
+                    alert = {
+                        start: new Date(data[index].timestamp),
+                        type: 'high_load',
+                    };
+                    alerts.push(alert);
+                } else {
+                    alert.end = new Date(data[index].timestamp);
+                }
+            } else {
+                if (alert.type === 'high_load') {
+                    alert = {
+                        start: new Date(data[index].timestamp),
+                        type: 'recover',
+                    };
+                    alerts.push(alert);
+                } else if (alert.type === 'recover') {
+                    alert.end = new Date(data[index].timestamp);
+                }
+            }
+        }
+        return alerts.filter(alert => {
+            if (alert.start && alert.end && (alert.end - alert.start) >= 120000) {
+                return true;
+            }
+            return false;
+        });
+    }
+
     loadCPUUsage = () => {
         const endDate = new Date().getTime();
         const startDate = endDate - PERIOD_DIFF[this.state.selectedPeriod];
@@ -88,8 +129,11 @@ export class Dashboard extends React.Component {
                 timestamp: moment(parseInt(d[0])).format('YYYY/MM/DD HH:mm:ss'),
                 load: parseFloat(d[1]).toFixed(4),
             }));
+            const normalizedLoad = this.normalizeData(load);
+            const alerts = this.findAlerts(normalizedLoad);
             this.setState({
-                load: this.normalizeData(load),
+                load: normalizedLoad,
+                alerts,
             });
             const usage = [];
             for (let i = 1; i < res.idle.length; i += 1) {
@@ -221,7 +265,27 @@ export class Dashboard extends React.Component {
                                 </CardBody>
                             </Card>
                         </Grid.Col>
-
+                        <Grid.Col { ...(applyColumn('alerts', layouts)) }>
+                            <Card>
+                                <CardHeader className="bb-0 pt-3 pb-4 bg-none" tag="h6">
+                                    <i className="fa fa-ellipsis-v text-body mr-2"></i> Alerts
+                                </CardHeader>
+                                <CardBody className="pt-2">
+                                    <ListGroup style={{ height: '100%', overflow: 'scroll' }}>
+                                        {this.state.alerts.length > 0 && this.state.alerts.map((alert, idx) => (
+                                            <ListGroupItem key={idx}>
+                                                <Alert
+                                                    type={alert.type}
+                                                    startDate={moment(alert.start).format('YYYY/MM/DD HH:mm:ss')}
+                                                    endDate={moment(alert.end).format('YYYY/MM/DD HH:mm:ss')}
+                                                />
+                                            </ListGroupItem>
+                                        ))}
+                                        {this.state.alerts.length === 0 && 'There is no alerts.'}
+                                    </ListGroup>
+                                </CardBody>
+                            </Card>
+                        </Grid.Col>
                         <Grid.Col { ...(applyColumn('live-cpu-load', layouts)) }>
                             <Card>
                                 <CardHeader className="bb-0 pt-3 pb-4 bg-none" tag="h6">
