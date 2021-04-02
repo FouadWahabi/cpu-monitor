@@ -18,11 +18,9 @@ var config = {
     srcHtmlLayout:          path.join(root, 'app', 'index.html'),
 
     // Site Config ====================================================
-    siteTitle:              'Airframe',
-    siteDescription:        'Default Dashboard ready for Development',
+    siteTitle:              'CPU Monitor',
+    siteDescription:        'A dashboard to display cpu monitoring metrics',
     siteCannonicalUrl:      'http://localhost:4100',
-    siteKeywords:           'react dashboard seed bootstrap',
-    scssIncludes:           []
 }
 
 module.exports = config;

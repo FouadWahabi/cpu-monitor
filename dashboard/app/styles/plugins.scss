@@ -35,6 +35,7 @@ $fa-font-path: "~font-awesome/fonts/";
   > .card {
       flex: 1 1 auto;
       margin-bottom: 15px;
+      height: 100%;
 
       + .react-resizable-handle {
           bottom: 15px;

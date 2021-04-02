@@ -3,6 +3,8 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 const ExtractCssChunks = require('extract-css-chunks-webpack-plugin');
+const dotenv = require('dotenv');
+const fs = require('fs');
 
 const config = require('../config');
 
@@ -41,6 +43,9 @@ module.exports = {
       chunksSortMode: 'none',
     }),
     new webpack.DefinePlugin({
+      'process.env': JSON.stringify(dotenv.parse(
+        fs.readFileSync(path.resolve('./environments/.development.env'))
+      )),
       'process.env.NODE_ENV': JSON.stringify('development'),
       'process.env.BASE_PATH': JSON.stringify(BASE_PATH),
     }),
