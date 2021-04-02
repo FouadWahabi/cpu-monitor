@@ -47,9 +47,13 @@ function read(monitor, start, end) {
         }
         const timeseries = fs.readFileSync(`${directory}/${file}`, 'utf-8')
           .split(os.EOL)
-          .map((timeserie) => timeserie.split(','));
+          .map((timeserie) => {
+            const ts = timeserie.split(',');
+            return [parseInt(ts[0], 10), ts[1]];
+          });
+        timeseries.splice(-1, 1);
         let startIndex = 0;
-        let endIndex = timeseries.length;
+        let endIndex = timeseries.length - 1;
         while (startIndex < timeseries.length
           && timeseries[startIndex] && new Date(timeseries[startIndex][0]) < startDate) {
           startIndex += 1;
@@ -60,7 +64,7 @@ function read(monitor, start, end) {
         }
         metrics[metric] = [
           ...metrics[metric],
-          ...timeseries.slice(startIndex, endIndex + startIndex),
+          ...timeseries.slice(startIndex, endIndex + 1),
         ];
       });
     }
