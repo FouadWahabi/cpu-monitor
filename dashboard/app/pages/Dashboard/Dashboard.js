@@ -20,6 +20,8 @@ import {
 } from "./components/CPUUsageMonitor";
 
 const LAYOUT = {
+    'live-cpu-usage': { h: 4, md: 6 },
+    'live-cpu-load': { h: 4, md: 6 },
     'cpu-load': { h: 9, minH: 7 },
     'cpu-usage': { h: 9, minH: 7 },
 }
@@ -47,6 +49,16 @@ export class Dashboard extends React.Component {
 
     dataLoadInterval = null;
     maxDataSize = 600;
+    
+    getStatusColor(value, maxValue) {
+        if (value < maxValue / 3) {
+            return 'success';
+        }
+        if (value < 2 * maxValue / 3) {
+            return 'warning';
+        }
+        return 'danger';
+    }
 
     _resetLayout = () => {
         this.setState({
@@ -109,7 +121,7 @@ export class Dashboard extends React.Component {
 
     componentDidMount() {
         this.loadCPUUsage();
-        this.dataLoadInterval = setInterval(this.loadCPUUsage, 10000);
+        this.dataLoadInterval = setInterval(this.loadCPUUsage, 5000);
     }
 
     componentWillUnmount() {
@@ -118,7 +130,10 @@ export class Dashboard extends React.Component {
 
     render() {
         const { layouts } = this.state;
-
+        const cpuUsagePercentage = parseFloat(this.state.usage[this.state.usage.length - 1] ?
+            this.state.usage[this.state.usage.length - 1].usage : '').toFixed(2);
+        const cpuLoad = parseFloat(this.state.load[this.state.load.length - 1] ?
+            this.state.load[this.state.load.length - 1].load : '').toFixed(2);
         return (
             <React.Fragment>
                 <Container fluid={ false }>
@@ -194,6 +209,32 @@ export class Dashboard extends React.Component {
                         columnSizes={ this.state.layouts }
                         rowHeight={ 55 }
                     >
+                        <Grid.Col { ...(applyColumn('live-cpu-usage', layouts)) }>
+                            <Card>
+                                <CardHeader className="bb-0 pt-3 pb-4 bg-none" tag="h6">
+                                    <i className="fa fa-ellipsis-v text-body mr-2"></i> Live CPU Usage
+                                </CardHeader>
+                                <CardBody className="pt-2 d-flex align-items-center justify-content-center">
+                                    <h1 className={`pt-4 pb-2 ${this.getStatusColor(cpuUsagePercentage, 100)}`}>
+                                        {cpuUsagePercentage}{' %'}
+                                    </h1>
+                                </CardBody>
+                            </Card>
+                        </Grid.Col>
+
+                        <Grid.Col { ...(applyColumn('live-cpu-load', layouts)) }>
+                            <Card>
+                                <CardHeader className="bb-0 pt-3 pb-4 bg-none" tag="h6">
+                                    <i className="fa fa-ellipsis-v text-body mr-2"></i> Live CPU Load
+                                </CardHeader>
+                                <CardBody className="pt-2 d-flex align-items-center justify-content-center">
+                                    <h1 className="pt-4 pb-2">
+                                        {cpuLoad}
+                                    </h1>
+                                </CardBody>
+                            </Card>
+                        </Grid.Col>
+
                         <Grid.Col { ...(applyColumn('cpu-usage', layouts)) }>
                             <Card>
                                 <CardHeader className="bb-0 pt-3 pb-4 bg-none" tag="h6">
