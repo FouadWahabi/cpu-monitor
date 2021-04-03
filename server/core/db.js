@@ -14,6 +14,17 @@ Date.prototype.addHours = function (h) {
 };
 
 /**
+ * Returns the date at midnight
+ */
+function bareDate(date) {
+  const newDate = new Date(date.getTime());
+  newDate.setMinutes(0);
+  newDate.setSeconds(0);
+  newDate.setMilliseconds(0);
+  return newDate;
+}
+
+/**
  * Creates the storage directory if doesnt exist
  */
 function init() {
@@ -50,7 +61,7 @@ function read(monitor, start, end) {
   if (startDate > endDate) {
     return metrics;
   }
-  for (let date = startDate; date <= endDate; date.addHours(1)) {
+  for (let date = new Date(startDate.getTime()); bareDate(date) <= endDate; date.addHours(1)) {
     const directory = `${dbDirectory}/${date.getFullYear()}/${date.getMonth()}/${date.getDate()}/${date.getHours()}`;
     if (fs.existsSync(directory)) {
       const files = fs.readdirSync(directory).filter((file) => file.startsWith(`${monitor}.`));
