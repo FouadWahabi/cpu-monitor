@@ -117,12 +117,16 @@ export class Dashboard extends React.Component {
                 }
             }
         }
-        return alerts.filter(alert => {
+        const filteredAlerts = alerts.filter(alert => {
             if (alert.start && alert.end && (alert.end - alert.start) >= 120000) {
                 return true;
             }
             return false;
         });
+        while (filteredAlerts.length > 0 && filteredAlerts[0].type === ALERT_TYPES.RECOVER) {
+            filteredAlerts.splice(0, 1);
+        }
+        return filteredAlerts;
     }
 
     /**
