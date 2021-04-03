@@ -1,0 +1,19 @@
+version: '3'
+services:
+  dashboard:
+    build: ./dashboard
+    ports:
+      - "4001:4001"
+    depends_on:
+      - "backend"
+    networks:
+      - "local"
+  backend:
+    build: ./backend
+    ports:
+      - "3000:3000"
+    networks:
+      - "local"
+networks:
+  local:
+    driver: bridge
