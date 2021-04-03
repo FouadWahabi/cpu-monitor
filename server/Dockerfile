@@ -6,10 +6,10 @@ RUN useradd -u 2000 -m admin
 USER admin
 
 WORKDIR /home/admin
-COPY . .
+COPY  --chown=admin:admin . .
 
 RUN yarn
 
 EXPOSE 3000
 
-CMD [ "yarn start" ]
+CMD ["yarn", "start"]

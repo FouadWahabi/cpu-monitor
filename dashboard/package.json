@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "A dashboard to display cpu monitoring metrics",
   "main": "index.js",
+  "private": "true",
   "scripts": {
     "start": "npm run start:dev",
     "build:dev": "node ./build/cli-tools.js --clear dist --create dist && webpack --config ./build/webpack.config.client.dev.js",

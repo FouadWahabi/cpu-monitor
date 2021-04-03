@@ -3,13 +3,15 @@ services:
   dashboard:
     build: ./dashboard
     ports:
-      - "4001:4001"
+      - "4100:4100"
     depends_on:
       - "backend"
     networks:
       - "local"
   backend:
-    build: ./backend
+    build: ./server
+    volumes:
+      - metrics-db:/home/admin/metrics-db
     ports:
       - "3000:3000"
     networks:
@@ -17,3 +19,5 @@ services:
 networks:
   local:
     driver: bridge
+volumes:
+  metrics-db:
