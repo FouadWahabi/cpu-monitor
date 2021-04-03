@@ -1,3 +1,6 @@
+/**
+ * The Runner runs the monitors and stores the metrics using the provided database.
+ */
 class Runner {
   constructor(runnable, db) {
     this.runnable = runnable;

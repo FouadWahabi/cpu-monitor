@@ -2,12 +2,18 @@ const os = require('os');
 
 const name = 'cpu_monitor';
 
+/**
+ * Gets the current CPUs load average
+ */
 function getLoad() {
   const cores = os.cpus().length;
   const load = os.loadavg()[0] / cores;
   return load;
 }
 
+/**
+ * Gets the average of the idle time and total time
+ */
 function cpuTime() {
   let totalIdle = 0;
   let totalTick = 0;
@@ -30,6 +36,9 @@ function cpuTime() {
   return { idle: totalIdle / cpus.length, total: totalTick / cpus.length };
 }
 
+/**
+ * Returns the current metrics
+ */
 function metrics() {
   const currentMetrics = {
     load: getLoad(),

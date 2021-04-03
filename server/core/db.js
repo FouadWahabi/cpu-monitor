@@ -3,17 +3,28 @@ const os = require('os');
 
 const dbDirectory = 'metrics-db';
 
+/**
+ * This is a simple file database that stores the timeseries data in local files tree
+ * indexed by the timestamp
+ */
+
 Date.prototype.addHours = function (h) {
   this.setTime(this.getTime() + (h * 60 * 60 * 1000));
   return this;
 };
 
+/**
+ * Creates the storage directory if doesnt exist
+ */
 function init() {
   if (!fs.existsSync(dbDirectory)) {
     fs.mkdirSync(dbDirectory);
   }
 }
 
+/**
+ * Stores timeseries data and use the collection name to create seperation between the data.
+ */
 function write(collection, data) {
   const timestamp = data[0];
   const date = new Date(timestamp);
@@ -28,6 +39,9 @@ function write(collection, data) {
   });
 }
 
+/**
+ * Reads the timeseries data from the local storage between start date and end date.
+ */
 function read(monitor, start, end) {
   const startDate = new Date(start);
   const endDate = new Date(end);
