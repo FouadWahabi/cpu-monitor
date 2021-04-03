@@ -1,7 +1,8 @@
 {
     "parser": "babel-eslint",
     "plugins": [
-        "react"
+        "react",
+        "jest"
     ],
     "parserOptions": {
         "ecmaVersion": 6,
@@ -16,11 +17,11 @@
         "browser": true,
         "node":    true,
         "mocha":   true
-    },   
+    },
     "extends": [
         "eslint:recommended", 
         "plugin:react/recommended"
-    ],    
+    ],
     "rules": {
     }
 }
