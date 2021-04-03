@@ -112,8 +112,7 @@ export class Row extends React.Component {
 
     /**
      * Finds the nearest breakpoint relative to the one provided in the
-     * first param. For example - when the `definition` param contains
-     * such bps - { md: 6, xs: 8 }, for `breakpoint` - xl/md will return 6
+     * first param.
      */
     _findClosestBreakpoint = (breakpoint, definition) => {
         let found = 12;

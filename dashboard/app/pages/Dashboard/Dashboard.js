@@ -15,12 +15,11 @@ import {
     ListGroup,
     ListGroupItem,
 } from 'reactstrap';
-import Grid, { applyColumn } from './../../components/FloatGrid';
 
-import {
-    CPUUsageMonitor
-} from "./components/CPUUsageMonitor";
 import Alert from './components/Alert';
+import MetricsGraph from "./components/MetricsGraph";
+import Grid, { applyColumn } from './../../components/FloatGrid';
+import { ALERT_TYPES } from './alertTypes';
 
 const LAYOUT = {
     'live-cpu-usage': { h: 4, md: 6 },
@@ -57,7 +56,7 @@ export class Dashboard extends React.Component {
     dataLoadInterval = null;
     maxDataSize = 600;
     
-    getStatusColor(value, maxValue) {
+    _getStatusColor(value, maxValue) {
         if (value < maxValue / 3) {
             return 'success';
         }
@@ -73,7 +72,11 @@ export class Dashboard extends React.Component {
         })
     }
 
-    normalizeData(data) {
+    /**
+     * Normalize the data by spliting it into mutiple slots and coomputing the average
+     * so that it doesn't exceed the maxDataSize.
+     */
+    _normalizeData(data) {
         if (data && data.length > this.maxDataSize) {
             const normalizedData = [];
             const itemsPerSlot = Math.floor(data.length / this.maxDataSize);
@@ -85,28 +88,31 @@ export class Dashboard extends React.Component {
         return data;
     }
 
-    findAlerts(data) {
+    /**
+     * Extracts the alerts from the metrics.
+     */
+    _findAlerts(data) {
         let alert = {};
         const alerts = [];
         for (let index = 0 ; index < data.length ; index += 1) {
             if (data[index].load >= HIGH_LOAD_THRESHOLD) {
-                if (alert.type !== 'high_load') {
+                if (alert.type !== ALERT_TYPES.HIGH_LOAD) {
                     alert = {
                         start: new Date(data[index].timestamp),
-                        type: 'high_load',
+                        type: ALERT_TYPES.HIGH_LOAD,
                     };
                     alerts.push(alert);
                 } else {
                     alert.end = new Date(data[index].timestamp);
                 }
             } else {
-                if (alert.type === 'high_load') {
+                if (alert.type === ALERT_TYPES.HIGH_LOAD) {
                     alert = {
                         start: new Date(data[index].timestamp),
-                        type: 'recover',
+                        type: ALERT_TYPES.RECOVER,
                     };
                     alerts.push(alert);
-                } else if (alert.type === 'recover') {
+                } else if (alert.type === ALERT_TYPES.RECOVER) {
                     alert.end = new Date(data[index].timestamp);
                 }
             }
@@ -119,22 +125,20 @@ export class Dashboard extends React.Component {
         });
     }
 
-    loadCPUUsage = () => {
+    /**
+     * Loads the CPU metrics from the backend
+     */
+    _loadCPUMetrics = () => {
         const endDate = new Date().getTime();
         const startDate = endDate - PERIOD_DIFF[this.state.selectedPeriod];
         fetch(`${process.env.BACKEND_URL}/cpu_monitor?start=${startDate}&end=${endDate}`)
         .then(res => res.json())
         .then(res => {
+            // convert and format the data
             const load = res.load.map(d => ({
                 timestamp: moment(parseInt(d[0])).format('YYYY/MM/DD HH:mm:ss'),
                 load: parseFloat(d[1]).toFixed(4),
             }));
-            const normalizedLoad = this.normalizeData(load);
-            const alerts = this.findAlerts(normalizedLoad);
-            this.setState({
-                load: normalizedLoad,
-                alerts,
-            });
             const usage = [];
             for (let i = 1; i < res.idle.length; i += 1) {
                 const currentIdleValue = res.idle[i];
@@ -151,21 +155,29 @@ export class Dashboard extends React.Component {
                     usage: usagePercentage.toFixed(4),
                 });
             }
+
+            const normalizedLoad = this._normalizeData(load);
+            const normalizedUssage = this._normalizeData(usage);
+
+            const alerts = this._findAlerts(normalizedLoad);
+
             this.setState({
-                usage: this.normalizeData(usage),
+                load: normalizedLoad,
+                usage: normalizedUssage,
+                alerts,
             });
         })
     }
 
     componentDidUpdate(prevProps, prevState) {
         if (prevState.selectedPeriod !== this.state.selectedPeriod) {
-            this.loadCPUUsage();
+            this._loadCPUMetrics();
         }
     }
 
     componentDidMount() {
-        this.loadCPUUsage();
-        this.dataLoadInterval = setInterval(this.loadCPUUsage, 5000);
+        this._loadCPUMetrics();
+        this.dataLoadInterval = setInterval(this._loadCPUMetrics, 5000);
     }
 
     componentWillUnmount() {
@@ -259,7 +271,7 @@ export class Dashboard extends React.Component {
                                     <i className="fa fa-ellipsis-v text-body mr-2"></i> Live CPU Usage
                                 </CardHeader>
                                 <CardBody className="pt-2 d-flex align-items-center justify-content-center">
-                                    <h1 className={`pt-4 pb-2 ${this.getStatusColor(cpuUsagePercentage, 100)}`}>
+                                    <h1 className={`pt-4 pb-2 ${this._getStatusColor(cpuUsagePercentage, 100)}`}>
                                         {cpuUsagePercentage}{' %'}
                                     </h1>
                                 </CardBody>
@@ -306,7 +318,7 @@ export class Dashboard extends React.Component {
                                 </CardHeader>
                                 <CardBody className="d-flex flex-column">
                                     <Grid.Ready>
-                                        <CPUUsageMonitor height="100%" className="flex-fill" data={this.state.load} xAxis="timestamp" yAxis="load" />
+                                        <MetricsGraph height="100%" className="flex-fill" data={this.state.load} xAxis="timestamp" yAxis="load" />
                                     </Grid.Ready>
                                 </CardBody>
                             </Card>
@@ -319,7 +331,7 @@ export class Dashboard extends React.Component {
                                 </CardHeader>
                                 <CardBody className="d-flex flex-column">
                                     <Grid.Ready>
-                                        <CPUUsageMonitor height="100%" className="flex-fill" data={this.state.usage} xAxis="timestamp" yAxis="usage" />
+                                        <MetricsGraph height="100%" className="flex-fill" data={this.state.usage} xAxis="timestamp" yAxis="usage" />
                                     </Grid.Ready>
                                 </CardBody>
                             </Card>

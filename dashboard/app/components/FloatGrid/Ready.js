@@ -11,4 +11,4 @@ export const Ready = ({ children }) => (
 );
 Ready.propTypes = {
     children: PropTypes.node
-}
+};

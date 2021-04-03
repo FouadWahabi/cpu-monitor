@@ -25,15 +25,11 @@ export class Grid extends React.Component {
             }
         });
 
-        if (typeof window !== 'undefined') {
-            window.addEventListener('resize', this._resizeHandler);
-        }
+        window.addEventListener('resize', this._resizeHandler);
     }
 
     componentWillUnmount() {
-        if (typeof window !== 'undefined') {
-            window.removeEventListener('resize', this._resizeHandler);
-        }
+        window.removeEventListener('resize', this._resizeHandler);
     }
 
     render() {

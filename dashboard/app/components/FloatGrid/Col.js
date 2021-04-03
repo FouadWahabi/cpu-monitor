@@ -1,37 +1,17 @@
 import React from 'react';
-import _ from 'lodash';
 import classNames from 'classnames';
-
-const breakPoints = [
-    { id: 'xl', min: 600 },
-    { id: 'lg', min: 496, max: 600 },
-    { id: 'md', min: 384, max: 496 },
-    { id: 'sm', min: 288, max: 384 },
-    { id: 'xs', max: 288 }
-];
-
-const getCurrentbreakPoint = (width, breakPoints) => {
-    let output = 'xl';
-    for (let bp of breakPoints) {
-        if (
-            (_.isUndefined(bp.min) || bp.min <= width) &&
-            (_.isUndefined(bp.max) || bp.max > width)
-        ) {
-            output = bp.id;
-        }
-    }
-    return output;
-};
+import PropTypes from 'prop-types';
 
 export class Col extends React.Component {
+    static propTypes = {
+        children: PropTypes.node,
+        className: PropTypes.string
+    }
 
     render() {
-        const { children, className, trueSize } = this.props;
-        const otherProps = _.omit(this.props, [..._.keys(Col.propTypes),
-            'minW', 'maxW', 'minH', 'maxH', 'moved', 'static', 'isDraggable', 'isResizable']);
-        const floatColBpId = trueSize ? getCurrentbreakPoint(trueSize.wPx, breakPoints) : 'xl';
+        const { children, className, ...otherProps } = this.props;
         const floatColClasses = classNames(className, 'float-col',
-            'float-column', `float-column--size-${floatColBpId}`);
+            'float-column', `float-column--size-xl`);
 
         return (
             <div { ...otherProps } className={ floatColClasses }>

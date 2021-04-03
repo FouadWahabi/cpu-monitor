@@ -12,10 +12,9 @@ import {
     Legend,
     Area
 } from './../../../components/recharts';
-
 import colors from './../../../colors';
 
-export const CPUUsageMonitor = ({height, className, data, xAxis, yAxis}) => (
+const MetricsGraph = ({ height, className, data, xAxis, yAxis }) => (
     <ResponsiveContainer
         width='100%'
         minHeight='250px'
@@ -39,10 +38,13 @@ export const CPUUsageMonitor = ({height, className, data, xAxis, yAxis}) => (
        </ComposedChart>
     </ResponsiveContainer>
 );
-CPUUsageMonitor.propTypes = {
+
+MetricsGraph.propTypes = {
     height: PropTypes.string,
     className: PropTypes.string,
-    data: PropTypes.object,
+    data: PropTypes.array,
     xAxis: PropTypes.string,
     yAxis: PropTypes.string,
 }
+
+export default MetricsGraph;
