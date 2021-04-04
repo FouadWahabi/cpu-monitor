@@ -159,4 +159,9 @@ In the dashboard we have 5 charts:
 * We can customize some environements variables: `BACKEND_URL` to change the data source.
 `HIGH_LOAD_THRESHOLD` to edit the high load threshold.
 
+## Improvements
 
+* Currently, the dahsboard supports only one data source and only one data format. It would be good improvement to add the support to different data sources and different popular data formats like [prometheus](https://prometheus.io/).
+* Instead of only showing alerts in the dashboard, it's important to send alerts by SMS and/or email.
+* Add more customizations, like themes,colors and chart types. And add the ability to save current customization.
+* Add authentication and permission management so that the metrics won't be publicly exposed.
