@@ -41,7 +41,7 @@ const PERIOD_DIFF = [60000, 60000 * 10, 60000 * 60, 60000 * 60 * 24 ];
 
 const PERIOD_LABELS = ['Last Minute', 'Last 10 Minutes', 'Last Hour', 'Last Day'];
 
-const HIGH_LOAD_THRESHOLD = 1;
+const HIGH_LOAD_THRESHOLD = process.env.HIGH_LOAD_THRESHOLD || 1;
 
 export class Dashboard extends React.Component {
     state = {
