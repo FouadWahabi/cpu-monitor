@@ -19,7 +19,7 @@ For simplicity we also provide an installation through Docker. To be able to use
 ## Installation
 ### Without using Docker
 
-Before wa can run the server and the dashbaord, we need to install all the dependecies.
+Before we can run the server and the dashbaord, we need to install all the dependecies.
 
 Install the server dependecies :
 ```
@@ -94,12 +94,13 @@ To run the live stress testing:
 ```
 timeout 3m stress --cpu $(nproc --all)
 ```
+This command will produce a high load on the CPUs. Watch the dashboard to track the metrics.
 
 ## Project structure
 
 The project is split into two parts:
-* The server: [./server](./server)
-* The dashboard: [./dashboard](./dashboard)
+* The server: [server](./server)
+* The dashboard: [dashboard](./dashboard)
 
 ### Server
 The server is responsible for collecting metrics and storing them in a timeseries structure.
@@ -113,7 +114,8 @@ The monitors are runnable modules that collects the metrics. The monitors should
     metric2: value2,
     ...
     timestamp: timestamp
-  }
+  },
+  ...
 ]
 ```
 
@@ -143,9 +145,9 @@ In the dashboard we have 5 charts:
 
 ***Live CPU Load***: Shows the current CPUs load average.
 
-***Alerts***: Show a list of alerts. We have two type of alerts: High Load alert:
+***Alerts***: Show a list of alerts. We have two type of alerts:
 * High Load Alert: when the load average is more or equal to 1 for 2 minutes of more.
-* Recover Alert: when the load average is less the 1 or 2 minutes or more.
+* Recover Alert: when the load average is less the 1 or 2 minutes for more.
 
 ***CPU Average load***: Shows a chart of the CPUs average load during the selected period of time.
 
