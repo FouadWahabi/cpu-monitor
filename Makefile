@@ -1,5 +1,6 @@
 -include local/Makefile
 
+MAKEFLAGS += -j2
 
 all: deps run
 
@@ -7,12 +8,12 @@ all: deps run
 
 deps-server: ## Install server dependencies.
 	@echo "install server dependencies"
-	cd server
+	@cd server; \
 	yarn install --pure-lockfile --no-progress
 
-deps-dashboard: node_modules ## Install dashboard dependencies.
+deps-dashboard: ## Install dashboard dependencies.
 	@echo "install frontend dependencies"
-	cd dashboard
+	@cd dashboard; \
 	yarn install --pure-lockfile --no-progress
 
 deps: deps-server deps-dashboard ## Install all dependencies.
@@ -21,12 +22,12 @@ deps: deps-server deps-dashboard ## Install all dependencies.
 
 run-server: ## Run the node server
 	@echo "run the server"
-	cd server
+	@cd server; \
 	yarn start
 
-run-dashbaord: ## Run the React dashboard
+run-dashboard: ## Run the React dashboard
 	@echo "run the dashboard"
-	cd dashboard
+	@cd dashboard; \
 	yarn start
 
 run: run-server run-dashboard ## Run the server and the dashboard
@@ -35,7 +36,7 @@ run: run-server run-dashboard ## Run the server and the dashboard
 
 test-dashboard: ## Run tests for dashboard.
 	@echo "test dashboard"
-	cd dashboard
+	@cd dashboard; \
 	yarn test
 
 test: test-dashboard ## Run all tests.
