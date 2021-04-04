@@ -1,12 +1,12 @@
 # cpu-monitor
 
-cpu-monitor is an application created to monitor the CPUs usage and load average. It provides metrics, visualizations and real-time alerts to analyze and monitor the CPUs.
+This application monitors the CPUs usage and load average. It provides metrics, visualizations and real-time alerts to analyze and monitor the host machine CPUs.
 
 ![cpu-monitor](demo.gif "cpu-monitor")
 
 ## Requirements 
 
-The project was designed and is intended to run with `Node >=14` on a [Unix-Like](https://en.wikipedia.org/wiki/Unix-like) operating system.
+The project was designed and is intended to run on a [Unix-Like](https://en.wikipedia.org/wiki/Unix-like) operating system.
 
 To be able to run this application locally, please make sure your have:
 
@@ -19,21 +19,21 @@ For simplicity we also provide an installation through Docker. To be able to use
 ## Installation
 ### Without using Docker
 
-Before we can run the server and the dashbaord, we need to install all the dependecies.
+Before we can run the server and the dashbaord, we need to install all the dependencies.
 
-Install the server dependecies :
+Install the server dependencies :
 ```
 cd server
 yarn install --pure-lockfile
 ```
 
-Install the dashboard dependecies :
+Install the dashboard dependencies :
 ```
 cd dashboard
 yarn install --pure-lockfile
 ```
 
-After the commands has finished, we can start running our server and dashboard:
+Once the commands have finished, we can start running our server and dashboard:
 
 Run the server :
 ```
@@ -47,9 +47,9 @@ cd dashboard
 yarn start
 ```
 
-*NOTE*: We also mprovide a `Makefile` to make it easier to build and run the project.
+*NOTE*: We also provide a `Makefile` to make it easier to build and run the project.
 
-**To run the porject using `Make`**
+Run the porject using `Make` :
 
 ```
 make deps
@@ -58,7 +58,7 @@ make run
 
 ### With using Docker
 
-To run the application in Docker, you can use `docker-compose` :
+Use `docker-compose` to run the application :
 ```
 docker-compose up
 ```
@@ -68,29 +68,29 @@ docker-compose up
 
 We have an automated mock testing written using `jest` testing framework.
 
-To run the automated tests:
+Run the automated tests:
 ```
 cd dashboard
 yarn test
 ```
 
-or simply using make:
+or simply use make:
 ```
 make test
 ```
 
-These tests will mock CPU metrics and check if the dashboard displays correctly the high load and recover alerts.
+These tests will mock CPU metrics and check if the dashboard displays correctly the alerts (high load alert and recover alert).
 
 ### Live stress testing
 
-Before running the live stress tests please make sure that the prject is perfectly running and that you can open it in the browser: [http://localhost:4100](http://localhost:4100).
+Before running the live stress tests please make sure that the prject is perfectly running and accessible from the browser: [http://localhost:4100](http://localhost:4100).
 
-We will need three commands :
+You will need three commands :
 * [stress](https://linux.die.net/man/1/stress)
 * [timeout](https://linux.die.net/man/1/timeout)
 * [nproc](https://linux.die.net/man/1/nproc)
 
-To run the live stress testing:
+Run the live stress testing:
 ```
 timeout 3m stress --cpu $(nproc --all)
 ```
@@ -98,15 +98,13 @@ This command will produce a high load on the CPUs. Watch the dashboard to track 
 
 ## Project structure
 
-The project is split into two parts:
-* The server: [server](./server)
-* The dashboard: [dashboard](./dashboard)
+The project is split into two parts: [server](./server), [dashboard](./dashboard).
 
 ### Server
-The server is responsible for collecting metrics and storing them in a timeseries structure.
+The server is responsible for collecting and storing metrics in a [timeseries](https://en.wikipedia.org/wiki/Time_series) structure.
 Following are the different parts of the server:
 * **Monitors**:
-The monitors are runnable modules that collects the metrics. The monitors should have a `metrics` method that returns metrics in a timeseries format:
+A monitor is a runnable module that exports a `metrics` method. This method returns metrics in a timeseries format:
 ```
 [
   {
@@ -119,49 +117,46 @@ The monitors are runnable modules that collects the metrics. The monitors should
 ]
 ```
 
-All the monitors should be the [./server/monitors](./server/monitors) directory to be loaded automatically during the startup of the server.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;All the monitors should be in the [./server/monitors](./server/monitors) directory to be loaded automatically during the server startup.
 
 * **Data storage**:
 The data storage is responsible for storing and retrieving the timeseries data.
-An example of a file data storage system: [./server/core/db.js](./server/core/db.js).
-This data storage creates a directory trees based on the timestamp and splits over the metrics over these directories.
+Here's an example of a file data storage system: [./server/core/db.js](./server/core/db.js).
+This data storage creates a directory tree based on the timestamp and splits over the metrics.
 Following is an example:
 ```
 - metrics-db
-  - 2021                      # The year
-    - 2                       # The month
-      - 31                    # The day
-        - 12                  # The hour
-          - cpu_monitor.idle  # The cpu_monitor idle metric
-          - cpu_monitor.load  # The cpu_monitor load metric
-          - cpu_monitor.total # The cpu_monitor total metric
+  - 2021                      # year
+    - 2                       # month
+      - 31                    # day
+        - 12                  # hour
+          - cpu_monitor.idle  # cpu_monitor idle metric
+          - cpu_monitor.load  # cpu_monitor load metric
+          - cpu_monitor.total # cpu_monitor total metric
 ```
 
 ### Dashboard
-The dashboard is a React applicatin that collects metrics during specific time period and displays it.
-In the dashboard we have 5 charts:
+The dashboard is a React application that displays the metrics during specific time period.
+The dashboard provides 2 KPIs:
 
-***Live CPU Usage***: Shows the current CPUs usage percentage. The color of the metric indicates if the CPU is on a high load.
+* **CPU Usage Percentage**: this KPI is displayed in two formats: a live CPU percentage and a line chart that shows the history of the CPU usage percentage over time.
 
-***Live CPU Load***: Shows the current CPUs load average.
+* **CPU Load Average**: this KPI is displayed in two formats: a live CPU load average and a line chart that shows the history of the CPU load average over time.
 
-***Alerts***: Show a list of alerts. We have two type of alerts:
-* High Load Alert: when the load average is more or equal to 1 for 2 minutes of more.
-* Recover Alert: when the load average is less the 1 or 2 minutes for more.
+The dashboard triggers two type of alerts:
 
-***CPU Average load***: Shows a chart of the CPUs average load during the selected period of time.
-
-***CPU Usage Percentage***: Shows a chart of the CPUs usage percentage during the selected period of time.
+  * **High Load Alert**: a CPU is considered under "high load" when its average load value exceeds the threshold for a period of 2 minutes or more.
+  * **Recover Alert**: a CPU is considered recovered from high load when its average load value drops below threshold for 2 minutes or more.
 
 **CUSTOMIZATION**:
 
-* Flexible layout: The dashboard is a flexible grid layout so that we can customize the size and the position of all the charts.
-* We can customize some environements variables: `BACKEND_URL` to change the data source.
-`HIGH_LOAD_THRESHOLD` to edit the high load threshold.
+* Flexible layout: The dashboard is a flexible grid layout. The size and the position of all the charts is customizable.
+* Customize environements variables: `BACKEND_URL` to change the data source.
+`HIGH_LOAD_THRESHOLD` to edit the high load threshold (the default value is 1).
 
 ## Improvements
 
-* Currently, the dahsboard supports only one data source and only one data format. It would be good improvement to add the support to different data sources and different popular data formats like [prometheus](https://prometheus.io/).
-* Instead of only showing alerts in the dashboard, it's important to send alerts by SMS and/or email.
-* Add more customizations, like themes,colors and chart types. And add the ability to save current customization.
+* Add support to different data sources and different popular data formats like [prometheus](https://prometheus.io/).
+* Send alerts by SMS and/or email.
+* Customize themes,colors and chart types and add the ability to save current customization.
 * Add authentication and permission management so that the metrics won't be publicly exposed.
