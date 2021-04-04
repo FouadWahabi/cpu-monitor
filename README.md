@@ -83,7 +83,7 @@ These tests will mock CPU metrics and check if the dashboard displays correctly 
 
 ### Live stress testing
 
-Before running the live stress tests please make sure that the prject is perfectly running and accessible from the browser: [http://localhost:4100](http://localhost:4100).
+Before running the live stress tests please make sure that the project is perfectly running and accessible from the browser: [http://localhost:4100](http://localhost:4100).
 
 You will need three commands :
 * [stress](https://linux.die.net/man/1/stress)
