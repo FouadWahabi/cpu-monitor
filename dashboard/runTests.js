@@ -19,12 +19,6 @@ require('dotenv').config({
 
 const jest = require('jest');
 let argv = process.argv.slice(2);
-
-if (
-  argv.indexOf('--watchAll') === -1 &&
-  argv.indexOf('--watchAll=false') === -1
-) {
-  argv.push('--watch');
-}
+argv.push('--watchAll');
 
 jest.run(argv);
