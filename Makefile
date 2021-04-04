@@ -2,6 +2,8 @@
 
 MAKEFLAGS += -j2
 
+.PHONY: all deps-server deps-dashboard depss run-server run-dashboard run run-docker test-dashboard tesst clean help
+
 all: deps run
 
 ##@ Dependencies
@@ -31,6 +33,10 @@ run-dashboard: ## Run the React dashboard
 	yarn start
 
 run: run-server run-dashboard ## Run the server and the dashboard
+
+run-docker: ## Run the server and the dashboard in Docker
+	@echo "run the server and the dashboard in Docker"
+	docker-compose up
 
 ##@ Testing
 
