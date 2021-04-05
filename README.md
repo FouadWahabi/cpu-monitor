@@ -14,7 +14,7 @@ To be able to run this application locally, please make sure your have:
 * [Node.js (>= 14)](https://nodejs.org)
 * [Yarn](https://yarnpkg.com)
 
-For simplicity we also provide an installation through Docker. To be able to use Docker please make sure you have `Docker` and `docker-compose` installed on your machine.
+You can also run this applicatin using `Docker`. For this, please make sure you have `Docker` and `docker-compose` installed on your machine.
 
 ## Installation
 ### Without using Docker
@@ -57,6 +57,8 @@ make run
 ```
 
 ### With using Docker
+
+*NOTE*: Pease note that by running the server in a `Docker` container, you will be monitoring the `Docker` container not the host machine.
 
 Use `docker-compose` to run the application :
 ```
