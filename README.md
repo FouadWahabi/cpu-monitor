@@ -58,7 +58,7 @@ make run
 
 ### With using Docker
 
-*NOTE*: Pease note that by running the server in a `Docker` container, you will be monitoring the `Docker` container not the host machine.
+*NOTE*: Pease note that by running the server in a `Docker` container, you will be monitoring the `Docker` container not the host machine. `Docker` uses the Linux [namespaces](https://man7.org/linux/man-pages/man7/namespaces.7.html) to isolate the resources.
 
 Use `docker-compose` to run the application :
 ```
